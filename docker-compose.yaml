@@ -49,6 +49,26 @@ services:
     volumes:
       - ./kafka-2:/var/lib/kafka/data
 
+  ##create 3rd broker
+  kafka-3:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka-3
+    hostname: kafka-3
+    depends_on:
+      - zookeeper
+    ports:
+      - "9096:9096"
+    environment:
+      KAFKA_BROKER_ID: 3
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-3:9097,PLAINTEXT_HOST://localhost:9096
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+    volumes:
+      - ./kafka-3:/var/lib/kafka/data
+
   kafka-proxy:
     image: confluentinc/cp-kafka-rest:latest
     container_name: kafka-proxy

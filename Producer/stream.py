@@ -15,8 +15,8 @@ class CustomStream(tweepy.StreamingClient):
 
     def on_data(self, data):
         data = json.loads(data)['data']
-        if 'text' in data:
-            print(data['text'])
+        self.producer.produce(data['text'])
+        print(f"Tweet Prodcued: {data['text']}")
     def on_connect(self):
         print("You are now connected to the streaming API.")
 

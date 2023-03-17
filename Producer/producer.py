@@ -1,13 +1,13 @@
 #import libraries for confludent kafka prodcer and twiteer api
 from confluent_kafka import Producer
-from confluent_kafka.admin import AdminClient, NewTopic    
+from confluent_kafka.admin import AdminClient, NewTopic   
+from utils.kafka_config import * 
 import tweepy
 import json
 import time
 import os
 import sys
 
-brokers = 'localhost:9094,localhost:9095'
 
 #Create a kakfa Producer class to listen to tweets using poll method
 class KafkaProducer(object):
