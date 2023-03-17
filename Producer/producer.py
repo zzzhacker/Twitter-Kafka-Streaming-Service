@@ -7,7 +7,6 @@ import time
 import os
 import sys
 
-bearer_token = 'AAAAAAAAAAAAAAAAAAAAABCQmAEAAAAAU7jmV4Wvkh120%2F3xRgrAH4yThYI%3Dibi13EbftCc2Ds5Bm7Adiz0XWBd9esWyn2Niwy079L2Lu4Dn1d'
 brokers = 'localhost:9094,localhost:9095'
 
 #Create a kakfa Producer class to listen to tweets using poll method
@@ -41,30 +40,6 @@ class KafkaProducer(object):
         except BufferError:
             sys.stderr.write('%% Local producer queue is full (%d messages awaiting delivery): try again')
 
-#Create a class to listen to tweets
-class CustomStream(tweepy.StreamingClient):
-    def __init__(self,auth,hashtags,topic):
-        super().__init__(auth)
-        self.hashtgas = hashtags
-        self.rules = [tweepy.StreamRule('#covid19', tag=topic) for hashtag in hashtags]## Create a rules for the stream
-        self.topic_name = f'org.tweets.{topic}'
-        self.producer = KafkaProducer(self.topic_name)
-        self.add_rules(self.rules)
-
-    def on_data(self, data):
-        data = json.loads(data)['data']
-        if 'text' in data:
-            print(data['text'])
-    def on_connect(self):
-        print("You are now connected to the streaming API.")
-
-
-topic= 'covid19'
-hashtags = ['#covid19']
-    
-#start stremaing tweets
-stream = CustomStream(bearer_token, hashtags, topic)
-stream.filter()
 
 
 
