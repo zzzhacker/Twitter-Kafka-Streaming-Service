@@ -1,0 +1,9 @@
+{
+    "namespace": "com.example.avro",
+    "type": "record",
+    "name": "Tweet",
+    "fields": [
+        {"name": "id", "type": "long"},
+        {"name": "text", "type": "string"}
+    ]
+}

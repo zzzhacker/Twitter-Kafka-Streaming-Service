@@ -7,9 +7,9 @@ topic= 'covid19'
 hashtags = ['#covid19']
     
 #start stremaing tweets
-# stream = CustomStream(bearer_token, hashtags, topic)
-# stream.filter()
+stream = CustomStream(bearer_token, hashtags, topic,avro=True,schema_name='tweet_value.avsc')
+stream.filter()
 
 ##Initialize the consumer
-consumer = KafkaConsumer(f'org.tweets.{topic}',True)
-consumer.consume()
+# consumer = KafkaConsumer(f'org.tweets.{topic}',True)
+# consumer.consume()
