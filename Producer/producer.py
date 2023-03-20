@@ -4,6 +4,7 @@ from confluent_kafka.admin import AdminClient, NewTopic
 from utils.kafka_config import *
 from confluent_kafka.schema_registry.avro import AvroSerializer
 from confluent_kafka.schema_registry import SchemaRegistryClient
+from confluent_kafka.serialization import SerializationContext, MessageField
 #import schema registry client
 
 from confluent_kafka import avro
@@ -59,8 +60,6 @@ class AvroKafkaProducer(KafkaProducer):
         with open(schema_path, "r") as f:
             schema_str = f.read()
 
-        # # Create Avro Schema object
-        # self.schema = avro.loads(schema_str)
         # Connect to Schema Registry
         self.schema_registry_client = SchemaRegistryClient({"url": schema_registry_url})
         # Create Avro Serliazer
@@ -69,7 +68,7 @@ class AvroKafkaProducer(KafkaProducer):
         self.producer = Producer({'bootstrap.servers': brokers})
     def produce(self, data):
         try:
-            self.producer.produce(topic=self.topic_name, value=self.avro_serializer(data))
+            self.producer.produce(topic=self.topic_name, value=self.avro_serializer(data,SerializationContext(self.topic_name, MessageField.VALUE)))
             self.producer.poll(0)
         except BufferError:
             sys.stderr.write('%% Local producer queue is full (%d messages awaiting delivery): try again\n' % len(self.producer))

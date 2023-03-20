@@ -9,6 +9,7 @@ class CustomStream(tweepy.StreamingClient):
     def __init__(self,auth,hashtags,topic,avro=False,schema_name=None):
         super().__init__(auth)
         self.hashtgas = hashtags
+        self.avro = avro
         self.rules = [tweepy.StreamRule('#covid19', tag=topic) for hashtag in hashtags]## Create a rules for the stream
         if avro:
             schema_path = f"avro_schemas/{schema_name}"
@@ -21,7 +22,8 @@ class CustomStream(tweepy.StreamingClient):
 
     def on_data(self, data):
         data = json.loads(data)['data']
-        self.producer.produce(data['text'])
+        if self.avro: self.producer.produce(data)
+        else: self.producer.produce(data['text'])
         print(f"Tweet Prodcued: {data}")
     def on_connect(self):
         print("You are now connected to the streaming API.")
