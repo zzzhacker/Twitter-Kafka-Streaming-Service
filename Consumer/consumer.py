@@ -3,7 +3,7 @@ from confluent_kafka import Consumer
 from utils.kafka_config import *
 from confluent_kafka.schema_registry.avro import AvroDeserializer
 from confluent_kafka.schema_registry import SchemaRegistryClient
-from confluent_kafka import avro
+from confluent_kafka.serialization import SerializationContext, MessageField
 
 ## create kafka consumer class to listen to tweets
 class KafkaConsumer(object):
@@ -47,22 +47,10 @@ class AvroKafkaConsumer(KafkaConsumer):
         # Load Avro schema from .avsc file
         with open(schema_path, "r") as f:
             schema_str = f.read()
-            
         # Connect to Schema Registry
         self.schema_registry_client = SchemaRegistryClient({"url": schema_registry_url})
         # Create Avro Deserializer
         self.avro_deserializer = AvroDeserializer(self.schema_registry_client, schema_str)
-
-        self.consumer = Consumer({'bootstrap.servers': brokers, 'group.id': '0'})
-        self.consumer.subscribe([self.topic_name])
-
-        #check if successfully subscribed to topic
-        topic_metadata = self.consumer.list_topics(topic=self.topic_name)
-        if self.topic_name in set(t.topic for t in iter(topic_metadata.topics.values())):
-            print(f'Successfully subscribed to topic {self.topic_name}')
-        else:
-            print(f'Failed to subscribe to topic {self.topic_name}')
-
         
 
     def consume(self):
@@ -74,6 +62,5 @@ class AvroKafkaConsumer(KafkaConsumer):
             elif msg.error() is not None:
                 print("error from consumer")
             else:
-
-                print('consumed message {}'.format(self.avr.decode_message(msg.value())))
+                print('consumed message {}'.format(self.avro_deserializer(msg.value(), SerializationContext(msg.topic(), MessageField.VALUE))))
             time.sleep(1)
