@@ -1,1 +1,1 @@
-bearer_token = 'AAAAAAAAAAAAAAAAAAAAABCQmAEAAAAAU7jmV4Wvkh120%2F3xRgrAH4yThYI%3Dibi13EbftCc2Ds5Bm7Adiz0XWBd9esWyn2Niwy079L2Lu4Dn1d'
+## bearer_token = "your token"
